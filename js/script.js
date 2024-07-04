@@ -1,3 +1,5 @@
+let currentThreadId = null;
+
 const query = (obj) =>
     Object.keys(obj)
         .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(obj[k]))
@@ -5,7 +7,7 @@ const query = (obj) =>
 const colorThemes = document.querySelectorAll('[name="theme"]');
 const markdown = window.markdownit();
 const message_box = document.getElementById(`messages`);
-const message_input = document.getElementById(`message-input`);
+// const message_input = document.getElementById(`message-input`);
 const box_conversations = document.querySelector(`.top`);
 const spinner = box_conversations.querySelector(".spinner");
 const stop_generating = document.querySelector(`.stop_generating`);
@@ -13,16 +15,16 @@ const send_button = document.querySelector(`#send-button`);
 const messageInput = document.getElementById('message-input');
 const fetchData = document.getElementById('fetchData');
 const messagesContainer = document.getElementById('messages');
-const text = message_input.value.trim();
+const text = messageInput.value.trim();
 const uniqueThreadId = `thread_${Date.now()}`;
 let prompt_lock = false;
 
 // hljs.addPlugin(new CopyButtonPlugin());
 
-// function resizeTextarea(textarea) {
-//     textarea.style.height = '80px';
-//     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
-// }
+function resizeTextarea(textarea) {
+    textarea.style.height = '80px';
+    textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+}
 
 // const format = (text) => {
 //     return text.replace(/(?:\r\n|\r|\n)/g, "<br>");
@@ -38,6 +40,7 @@ let prompt_lock = false;
 
 document.getElementById('new_convo').addEventListener('click', function () {
     addThreadToThreadsDiv("thread_lF9tOfU3SjzxRsnxfQAieR4g");
+    //fetchNewThreadId();
 
 });
 function fetchNewThreadId() {
@@ -48,6 +51,7 @@ function fetchNewThreadId() {
         })
         .catch(error => console.error('Error creating thread:', error));
 }
+
 function addThreadToThreadsDiv(threadId) {
     const threadsDiv = document.querySelector('.threads');
     if (!threadsDiv) {
@@ -55,9 +59,7 @@ function addThreadToThreadsDiv(threadId) {
         return;
     }
 
-    if (threadsDiv.children.length >= 12) {
-        threadsDiv.removeChild(threadsDiv.firstChild);
-    }
+    const shouldScrollToBottom = threadsDiv.scrollTop === threadsDiv.scrollHeight - threadsDiv.clientHeight;
 
     const threadItem = document.createElement('div');
     threadItem.className = 'thread-item';
@@ -65,28 +67,37 @@ function addThreadToThreadsDiv(threadId) {
     threadsDiv.appendChild(threadItem);
 
     // Apply styles to prevent overflow
-    threadItem.style.overflow = 'hidden';
     threadItem.style.whiteSpace = 'nowrap';
-    threadItem.style.padding = '5px 5px 5px 5px';
+    threadItem.style.padding = '5px 10px 5 px 5px';
     threadItem.style.border = '1px solid white';
-    threadItem.style.borderRadius = '10px 10px 10px 10px';
+    threadItem.style.borderRadius = '10px';
+    threadItem.style.marginBottom = '5px';
+    threadItem.style.marginRight = '5px';
     threadItem.style.textOverflow = 'ellipsis';
     threadItem.style.maxWidth = '100%'; // Ensure it does not exceed the parent div's width
     threadItem.style.display = 'block'; // Or 'inline-block'
+    threadItem.style.overflow = 'hidden'; // Hide any overflow content
 
-    threadItem.addEventListener('click', () => displayMessages(threadId));
+    threadItem.addEventListener('click', () => {
+        currentThreadId = threadId;
+        displayMessages(threadId);
+    });
 
-    threadsDiv.style.overflowY = 'auto';
-    threadsDiv.style.maxHeight = '500px';
+    if (shouldScrollToBottom) {
+        threadsDiv.scrollTop = threadsDiv.scrollHeight - threadsDiv.clientHeight;
+    }
 }
+
+// Ensure the container can scroll vertically when there are many thread items
+document.querySelector('.threads').style.overflowY = 'auto';
 
 
 async function displayMessages(threadId) {
     const messagesContainer = document.getElementById('messages'); // Assuming you have an element with id 'messages'
 
     // Fetch messages from an API
-    //const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=${threadId}`); // Replace 'API_ENDPOINT' with the actual endpoint
-    const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=thread_lF9tOfU3SjzxRsnxfQAieR4g`); // Replace 'API_ENDPOINT' with the actual endpoint
+    const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=${threadId}`);
+    //const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=thread_lF9tOfU3SjzxRsnxfQAieR4g`); 
     const sampleMessages = await response.json(); // Assuming the API returns JSON in the expected format
 
     messagesContainer.innerHTML = ''; // Clear previous messages
@@ -95,13 +106,12 @@ async function displayMessages(threadId) {
         messageElement.classList.add('message', message.Role.toLowerCase() + '-message');
         // Apply different styling based on the message role
         if (message.Role.toLowerCase() === 'user') {
-            messageElement.style.border = '2px solid white';
+            messageElement.style.border = '1px solid white';
             messageElement.style.padding = '10px 10px 10px 10px';
-            messageElement.style.backgroundColor = '#84719040'; // Light grey background for doctor messages
+            messageElement.style.backgroundColor = '#84719040';
         } else { // Assuming the other role is 'assistant'
             messageElement.style.border = '2px solid white';
             messageElement.style.padding = '10px 10px 10px 10px ';
-            messageElement.style.backgroundColor = '#000'; // Light blue background for assistant messages
         }
         messageElement.innerHTML = `<p>${message.Content[0].Text}</p>`;
         messagesContainer.appendChild(messageElement);
@@ -109,13 +119,18 @@ async function displayMessages(threadId) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-async function sendMessage(threadId, text) {
-    const response = await fetch(`http://localhost:5111/Thread/SendMessage?threadId=${threadId}&text=${encodeURIComponent(text)}`, {
+async function sendMessage(text) {
+    if (!currentThreadId) {
+        console.error('No thread selected. Cannot send message.');
+        return;
+    }
+
+    const response = await fetch(`http://localhost:5111/Thread/SendMessage`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ threadId, text })
+        body: JSON.stringify({ threadId: currentThreadId, text })
     });
 
     if (!response.ok) {
@@ -124,27 +139,47 @@ async function sendMessage(threadId, text) {
     }
 
     console.log('Message sent successfully:', await response.json());
+    displayMessages(currentThreadId);
 }
 
+async function handleSendMessage() {
+    const text = messageInput.value.trim();
+    if (text === '') {
+        console.log('Input field is empty. Not sending message.');
+        return;
+    }
 
-// Event listener for pressing Enter key
-messageInput.addEventListener('keypress', async (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    await sendMessage(text);
+    messageInput.value = ''; // Clear the input field after sending
+}
+
+send_button.addEventListener('click', handleSendMessage);
+
+messageInput.addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
         event.preventDefault();
-
-        if (text) {
-            await sendMessage(threadId, text);
-            message_input.value = ''; // Clear the input after sending
-        }
+        handleSendMessage();
     }
 });
-function resizeTextarea(textarea) {
-    textarea.style.height = '80px';
-    textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
-}
+
+// Event listener for pressing Enter key
+// messageInput.addEventListener(`keypress`, async (event) => {
+//     if (event.key === 'Enter' && !event.shiftKey) {
+//         event.preventDefault();
+
+//         if (text) {
+//             await sendMessage(threadId, text);
+//             message_input.value = ''; // Clear the input after sending
+//         }
+//     }
+// });
 
 
 
+// send_button.addEventListener(`click`, async () => {
+//     console.log("clicked send");
+//     sendMessage("thread_lF9tOfU3SjzxRsnxfQAieR4g", text);
+// });
 
 
 // new code
@@ -594,11 +629,7 @@ function resizeTextarea(textarea) {
 //         }
 //     });
 
-//     send_button.addEventListener(`click`, async () => {
-//         console.log("clicked send");
-//         if (prompt_lock) return;
-//         await handle_ask();
-//     });
+
 
 //     register_settings_localstorage();
 // };

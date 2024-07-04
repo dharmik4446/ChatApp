@@ -32,6 +32,29 @@
     border-style: solid;
 }
 
+.threads {
+    max-height: 500px;
+    /* Limit the container height */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    overflow-x: hidden;
+    /* Prevent horizontal scrolling */
+}
+
+.thread-item {
+    white-space: nowrap;
+    padding: 5px;
+    border: 1px solid white;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    /* Ensure it does not exceed the parent div's width */
+    display: block;
+    /* Or 'inline-block' */
+    overflow: hidden;
+    /* Hide any overflow content */
+}
 
 /* :root {
     --colour-1: #ffffff;
@@ -109,13 +132,14 @@ body {
 }
 
 .conversations {
-    max-width: 260px;
     padding: var(--section-gap);
     overflow: auto;
     flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
     justify-content: space-between;
+    display: flex;
+    max-width: 260px;
+    flex-direction: column;
+    height: 95vh;
 }
 
 .conversation {
@@ -130,13 +154,14 @@ body {
 }
 
 .conversation #messages {
+    height: 100vh;
     width: 100%;
     display: flex;
     flex-direction: column;
     overflow-wrap: break-word;
     overflow-y: inherit;
     overflow-x: hidden;
-    padding-bottom: 50px;
+    /* padding-bottom: 50px; */
 }
 
 .conversation .user-input {
@@ -508,9 +533,11 @@ select {
 .bottom_buttons {
     width: 100%;
     display: flex;
-    padding-top: 400px;
+    padding-top: 20px;
     flex-direction: column;
     gap: 10px;
+    align-items: end;
+    margin-top: auto;
 }
 
 .bottom_buttons button {
