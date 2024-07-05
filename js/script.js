@@ -17,30 +17,41 @@ const fetchData = document.getElementById('fetchData');
 const messagesContainer = document.getElementById('messages');
 const text = messageInput.value.trim();
 const uniqueThreadId = `thread_${Date.now()}`;
+const md = window.markdownit();
 let prompt_lock = false;
 
 // hljs.addPlugin(new CopyButtonPlugin());
 
 function resizeTextarea(textarea) {
-    textarea.style.height = '80px';
+    textarea.style.height = '70px';
     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
 }
 
-// const format = (text) => {
-//     return text.replace(/(?:\r\n|\r|\n)/g, "<br>");
-// };
+document.querySelector(".mobile-sidebar").addEventListener("click", (event) => {
+    const sidebar = document.querySelector(".conversations");
 
-// message_input.addEventListener("blur", () => {
+    if (sidebar.classList.contains("shown")) {
+        sidebar.classList.remove("shown");
+        event.target.classList.remove("rotated");
+    } else {
+        sidebar.classList.add("shown");
+        event.target.classList.add("rotated");
+    }
+
+    window.scrollTo(0, 0);
+});
+
+// messageInput.addEventListener("blur", () => {
 //     window.scrollTo(0, 0);
 // });
 
-// message_input.addEventListener("focus", () => {
+// messageInput.addEventListener("focus", () => {
 //     document.documentElement.scrollTop = document.documentElement.scrollHeight;
 // });
 
 document.getElementById('new_convo').addEventListener('click', function () {
-    addThreadToThreadsDiv("thread_lF9tOfU3SjzxRsnxfQAieR4g");
-    //fetchNewThreadId();
+    //addThreadToThreadsDiv("thread_lF9tOfU3SjzxRsnxfQAieR4g");
+    fetchNewThreadId();
 
 });
 function fetchNewThreadId() {
@@ -106,14 +117,19 @@ async function displayMessages(threadId) {
         messageElement.classList.add('message', message.Role.toLowerCase() + '-message');
         // Apply different styling based on the message role
         if (message.Role.toLowerCase() === 'user') {
-            messageElement.style.border = '1px solid white';
-            messageElement.style.padding = '10px 10px 10px 10px';
-            messageElement.style.backgroundColor = '#84719040';
+            messageElement.style.padding = '10px 5px 10px 10px';
+            messageElement.style.width = '70%';
         } else { // Assuming the other role is 'assistant'
-            messageElement.style.border = '2px solid white';
             messageElement.style.padding = '10px 10px 10px 10px ';
+            messageElement.style.width = '80%';
         }
-        messageElement.innerHTML = `<p>${message.Content[0].Text}</p>`;
+        messageElement.style.backgroundColor = '#84719040';
+        // messageElement.style.width = 'fit-content';
+        messageElement.style.borderRadius = '8px';
+        messageElement.style.margin = '10px 10px 0px 2px';
+        const renderedContent = md.render(message.Content[0].Text);
+        messageElement.innerHTML = `${renderedContent}`;
+        console.log(renderedContent);
         messagesContainer.appendChild(messageElement);
     });
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -135,6 +151,8 @@ async function sendMessage(text) {
 
     if (!response.ok) {
         console.error('Error sending message:', await response.text());
+        messageInput.disabled = false; // Re-enable input field if there's an error
+        messageInput.value = ''; // Clear input field if there's an error
         return;
     }
 
@@ -149,37 +167,70 @@ async function handleSendMessage() {
         return;
     }
 
+    messageInput.disabled = true; // Disable input field
+    messageInput.value = '';
+    messageInput.placeholder = ''; // Clear the input field immediately
+    showGeneratingText(); // Show generating text with animation
+
     await sendMessage(text);
-    messageInput.value = ''; // Clear the input field after sending
+
+    messageInput.disabled = false; // Re-enable input field
+    removeGeneratingText();
+    messageInput.placeholder = 'Ask a question..';
+    resizeTextarea(messageInput); // Reset the textarea size
+}
+
+function showGeneratingText() {
+    const generatingText = document.createElement('div');
+    generatingText.id = 'generating-text';
+    generatingText.innerText = 'Generating';
+    generatingText.style.position = 'absolute';
+    generatingText.style.left = '10px';
+    generatingText.style.top = '50%';
+    generatingText.style.transform = 'translateY(-50%)';
+    generatingText.style.color = 'gray';
+    generatingText.style.pointerEvents = 'none'; // Make sure the element does not block mouse events
+    document.querySelector('.input-box').appendChild(generatingText);
+
+
+
+    let dotCount = 0;
+    generatingText.animationInterval = setInterval(() => {
+        dotCount = (dotCount + 1) % 4;
+        generatingText.innerText = 'Generating' + '.'.repeat(dotCount);
+    }, 500);
+}
+
+function removeGeneratingText() {
+    const generatingText = document.getElementById('generating-text');
+    if (generatingText) {
+        clearInterval(generatingText.animationInterval);
+        generatingText.remove();
+    }
 }
 
 send_button.addEventListener('click', handleSendMessage);
 
-messageInput.addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') {
+messageInput.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         handleSendMessage();
     }
 });
 
-// Event listener for pressing Enter key
-// messageInput.addEventListener(`keypress`, async (event) => {
-//     if (event.key === 'Enter' && !event.shiftKey) {
-//         event.preventDefault();
+messageInput.addEventListener('input', function () {
+    resizeTextarea(this);
+});
 
-//         if (text) {
-//             await sendMessage(threadId, text);
-//             message_input.value = ''; // Clear the input after sending
-//         }
-//     }
-// });
+function resizeTextarea(textarea) {
+    textarea.style.height = '70px';
+    textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+}
 
-
-
-// send_button.addEventListener(`click`, async () => {
-//     console.log("clicked send");
-//     sendMessage("thread_lF9tOfU3SjzxRsnxfQAieR4g", text);
-// });
+// function resizeTextarea(textarea) {
+//     textarea.style.height = 'auto';
+//     textarea.style.height = `${textarea.scrollHeight}px`;
+// }
 
 
 // new code

@@ -25,84 +25,7 @@
         const gpt_image = `<img src="/assets/img/gpt.png" alt="GPT Avatar">`;
     </script>
     <style>
-        .hljs {
-            color: #e9e9f4;
-            background: #28293629;
-            border-radius: var(--border-radius-1);
-            border: 1px solid var(--blur-border);
-            font-size: 15px;
-        }
 
-        .box#messages {
-            overflow-y: auto;
-            /* Enable vertical scrolling if content overflows */
-        }
-
-        /* Styling the scrollbar track */
-        .box#messages::-webkit-scrollbar {
-            width: 8px;
-            /* Width of the scrollbar */
-            background-color: #deaaf5;
-            /* Color of the scrollbar track */
-        }
-
-        /* Styling the scrollbar thumb */
-        .box#messages::-webkit-scrollbar-thumb {
-            background-color: #4a4a4a;
-            /* Color of the scrollbar thumb */
-            border-radius: 4px;
-            /* Rounded corners of the scrollbar thumb */
-            /* Creates a bit of margin between the track and thumb */
-        }
-
-        /* Optionally, styling the scrollbar button (up and down arrows) */
-        .box#messages::-webkit-scrollbar-button {
-            display: none;
-            /* Usually, it's better to hide these for modern designs */
-        }
-
-        #message-input {
-            margin-right: 30px;
-            height: 80px;
-        }
-
-        #message-input::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        /* Track */
-        #message-input::-webkit-scrollbar-track {
-            background: #eec1ff;
-        }
-
-        /* Handle */
-        #message-input::-webkit-scrollbar-thumb {
-            background: #787878;
-        }
-
-        /* Handle on hover */
-        #message-input::-webkit-scrollbar-thumb:hover {
-            background: #d3d3d3;
-        }
-
-        .threads::-webkit-scrollbar {
-            width: 5px;
-        }
-
-        /* Track */
-        .threads::-webkit-scrollbar-track {
-            background: #edc1ff;
-        }
-
-        /* Handle */
-        .threads::-webkit-scrollbar-thumb {
-            background: #767676;
-        }
-
-        /* Handle on hover */
-        .threads::-webkit-scrollbar-thumb:hover {
-            background: #afafaf;
-        }
     </style>
     <script src="js/highlight.min.js"></script>
     <script src="js/highlightjs-copy.min.js"></script>
@@ -141,21 +64,19 @@
             </div>
             <div class="user-input">
                 <div class="box input-box">
-                    <textarea id="message-input" placeholder="Ask a question" cols="30" rows="2"
-                        style="white-space: pre-wrap; max-height: 30px; overflow-y: auto;"
-                        oninput="resizeTextarea(this)"></textarea>
+                    <textarea id="message-input" placeholder="Ask a question"></textarea>
                     <div id="send-button">
                         <i class="fa-regular fa-paper-plane-top"></i>
                     </div>
                 </div>
             </div>
             <div class="buttons">
-                <div class="field">
+                <!-- <div class="field">
                     <input type="checkbox" id="switch" />
                     <label for="switch"></label>
                     <span class="about">Web Access</span>
-                </div>
-                <div class="field">
+                </div> -->
+                <!-- <div class="field">
                     <select name="model" id="model">
                         <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
                         <option value="gpt-4">gpt-4</option>
@@ -163,10 +84,10 @@
                         <option value="gpt-4-0314">gpt-4-0314</option>
                         <option value="gpt-4-turbo">gpt-4-turbo</option>
                         <option value="gpt-4o" selected>gpt-4o</option>
-                    </select>
-                    <!-- <span class="about">Model</span> -->
-                </div>
-                <div class="field">
+                    </select> -->
+                <!-- <span class="about">Model</span> -->
+                <!-- </div> -->
+                <!-- <div class="field">
                     <select name="jailbreak" id="jailbreak">
                         <option value="default" selected>default</option>
                         <option value="gpt-math-1.0">math 1.0</option>
@@ -176,7 +97,7 @@
                         <option value="gpt-dev-2.0">dev 2.0</option>
                         <option value="gpt-evil-1.0">evil 1.0</option>
                     </select>
-                </div>
+                </div> -->
 
                 <form class="color-picker" action="">
                     <fieldset>

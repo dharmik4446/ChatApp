@@ -1,26 +1,100 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 /* old css */
-#messagesContainer {
+/* #messagesContainer {
     margin-top: 20px;
     color: #007bff;
     height: inherit;
     width: 100%;
+} */
+
+
+.hljs {
+    color: #e9e9f4;
+    background: #28293629;
+    border-radius: var(--border-radius-1);
+    border: 1px solid var(--blur-border);
+    font-size: 15px;
 }
 
+.box#messages {
+    max-height: 90vh;
+}
 
+/* Styling the scrollbar track */
+.box#messages::-webkit-scrollbar {
+    width: 8px;
 
-.fetchData {
-    padding: 8px 12px;
-    display: flex;
-    color: #007bff;
-    gap: 18px;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
-    background: transparent;
-    border: 1px dashed var(--conversations);
-    border-radius: var(--border-radius-1);
+}
+
+/* Styling the scrollbar thumb */
+.box#messages::-webkit-scrollbar-thumb {
+    background-color: #929191;
+    border-radius: 5px;
+    padding: 0px 2px 0px 2px;
+    width: 4px;
+}
+
+/* Optionally, styling the scrollbar button (up and down arrows) */
+.box#messages::-webkit-scrollbar-button {
+    display: none;
+    /* Usually, it's better to hide these for modern designs */
+}
+
+.box#messages::-webkit-scrollbar-thumb:hover {
+    background: #d3d3d3;
+}
+
+#message-input {
+    margin-right: 30px;
+    padding-top: 10px;
+    max-height: 50px;
+    overflow-y: auto;
+    resize: none;
+}
+
+#message-input::-webkit-scrollbar {
+    width: 8px;
+    padding-right: 10px;
+}
+
+/* Track */
+#message-input::-webkit-scrollbar-track {
+    display: none;
+    border-radius: 4px;
+}
+
+/* Handle */
+#message-input::-webkit-scrollbar-thumb {
+    width: 2px;
+    background: #929191;
+    border-radius: 5px;
+    padding: 0px 2px 0px 2px;
+}
+
+/* Handle on hover */
+#message-input::-webkit-scrollbar-thumb:hover {
+    background: #d3d3d3;
+}
+
+.threads::-webkit-scrollbar {
+    width: 5px;
+}
+
+/* Track */
+.threads::-webkit-scrollbar-track {
+    border-radius: 4px;
+    background: #d2d2d2;
+}
+
+/* Handle */
+.threads::-webkit-scrollbar-thumb {
+    background: #929191;
+}
+
+/* Handle on hover */
+.threads::-webkit-scrollbar-thumb:hover {
+    background: #d3d3d3;
 }
 
 .fetchData span {
@@ -159,14 +233,14 @@ body {
     display: flex;
     flex-direction: column;
     overflow-wrap: break-word;
-    overflow-y: inherit;
+    overflow-y: auto;
     overflow-x: hidden;
     /* padding-bottom: 50px; */
 }
 
-.conversation .user-input {
+/* .conversation .user-input {
     max-height: 10vh;
-}
+} */
 
 .conversation .user-input input {
     font-size: 15px;
@@ -253,7 +327,7 @@ body {
 
     width: 100%;
     overflow-wrap: break-word;
-    display: flex;
+    /* display: flex; */
     gap: var(--section-gap);
     padding: var(--section-gap);
     padding-bottom: 0;
@@ -511,6 +585,8 @@ select {
 }
 
 .input-box {
+    padding: 2px;
+    height: fit-content;
     display: flex;
     align-items: center;
     padding-right: 15px;
@@ -667,14 +743,14 @@ ul {
     .conversations {
         display: none;
         width: 100%;
-        max-width: none;
+        /* max-width: none; */
     }
 
     .buttons {
         flex-wrap: wrap;
         gap: 5px;
-        padding-bottom: 10vh;
-        margin-bottom: 10vh;
+        /* padding-bottom: 10vh;
+        margin-bottom: 10vh; */
     }
 
     .field {
