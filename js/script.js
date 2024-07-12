@@ -16,7 +16,7 @@ const messageInput = document.getElementById('message-input');
 const fetchData = document.getElementById('fetchData');
 const messagesContainer = document.getElementById('messages');
 const text = messageInput.value.trim();
-const uniqueThreadId = `thread_${Date.now()}`;
+// const uniqueThreadId = `thread_${Date.now()}`;
 const md = window.markdownit();
 let prompt_lock = false;
 
@@ -41,26 +41,23 @@ document.querySelector(".mobile-sidebar").addEventListener("click", (event) => {
     window.scrollTo(0, 0);
 });
 
-// messageInput.addEventListener("blur", () => {
-//     window.scrollTo(0, 0);
-// });
 
-// messageInput.addEventListener("focus", () => {
-//     document.documentElement.scrollTop = document.documentElement.scrollHeight;
-// });
 
 document.getElementById('new_convo').addEventListener('click', function () {
     //addThreadToThreadsDiv("thread_lF9tOfU3SjzxRsnxfQAieR4g");
     fetchNewThreadId();
 
 });
-function fetchNewThreadId() {
-    fetch("http://localhost:5111/Thread/CreateThread")
-        .then(response => response.json())
-        .then(data => {
-            addThreadToThreadsDiv(data.threadId);
-        })
-        .catch(error => console.error('Error creating thread:', error));
+async function fetchNewThreadId() {
+    try {
+        const response = await fetch("http://localhost:5111/Thread/CreateThread");
+        const data = await response.json();
+        addThreadToThreadsDiv(data.threadId);
+        currentThreadId = data.threadId;
+        return data.threadId; // Return the new threadId
+    } catch (error) {
+        console.error('Error creating thread:', error);
+    }
 }
 
 function addThreadToThreadsDiv(threadId) {
@@ -70,7 +67,7 @@ function addThreadToThreadsDiv(threadId) {
         return;
     }
 
-    const shouldScrollToBottom = threadsDiv.scrollTop === threadsDiv.scrollHeight - threadsDiv.clientHeight;
+    //const shouldScrollToBottom = threadsDiv.scrollTop === threadsDiv.scrollHeight - threadsDiv.clientHeight;
 
     const threadItem = document.createElement('div');
     threadItem.className = 'thread-item';
@@ -94,9 +91,8 @@ function addThreadToThreadsDiv(threadId) {
         displayMessages(threadId);
     });
 
-    if (shouldScrollToBottom) {
-        threadsDiv.scrollTop = threadsDiv.scrollHeight - threadsDiv.clientHeight;
-    }
+    threadsDiv.insertBefore(threadItem, threadsDiv.firstChild);
+
 }
 
 // Ensure the container can scroll vertically when there are many thread items
@@ -108,7 +104,7 @@ async function displayMessages(threadId) {
 
     // Fetch messages from an API
     const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=${threadId}`);
-    //const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=thread_lF9tOfU3SjzxRsnxfQAieR4g`); 
+    //const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=thread_lF9tOfU3SjzxRsnxfQAieR4g`);
     const sampleMessages = await response.json(); // Assuming the API returns JSON in the expected format
 
     messagesContainer.innerHTML = ''; // Clear previous messages
@@ -117,17 +113,25 @@ async function displayMessages(threadId) {
         messageElement.classList.add('message', message.Role.toLowerCase() + '-message');
         // Apply different styling based on the message role
         if (message.Role.toLowerCase() === 'user') {
-            messageElement.style.padding = '10px 5px 10px 10px';
-            messageElement.style.width = '70%';
-        } else { // Assuming the other role is 'assistant'
-            messageElement.style.padding = '10px 10px 10px 10px ';
-            messageElement.style.width = '80%';
+            messageElement.style.padding = '10px';
+            messageElement.style.alignSelf = 'flex-end';
+            messageElement.style.width = 'fit-content';
+            messageElement.style.maxWidth = '80%';
+        } else {
+            messageElement.style.padding = '10px';
+            messageElement.style.width = 'fit-content';
+            messageElement.style.maxWidth = '80%';
         }
+        messageElement.style.lineHeight = '1.5';
         messageElement.style.backgroundColor = '#84719040';
-        // messageElement.style.width = 'fit-content';
+        //messageElement.style.width = 'fit-content';
         messageElement.style.borderRadius = '8px';
-        messageElement.style.margin = '10px 10px 0px 2px';
-        const renderedContent = md.render(message.Content[0].Text);
+        messageElement.style.margin = '5px';
+        //const renderedContent = md.render(message.Content[0].Text);
+        const cleanedContent = message.Content[0].Text.replace(/【.*?】/g, '');
+
+        // Render the cleaned content
+        const renderedContent = md.render(cleanedContent);
         messageElement.innerHTML = `${renderedContent}`;
         console.log(renderedContent);
         messagesContainer.appendChild(messageElement);
@@ -135,18 +139,13 @@ async function displayMessages(threadId) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-async function sendMessage(text) {
-    if (!currentThreadId) {
-        console.error('No thread selected. Cannot send message.');
-        return;
-    }
-
+async function sendMessage(text, threadId) {
     const response = await fetch(`http://localhost:5111/Thread/SendMessage`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ threadId: currentThreadId, text })
+        body: JSON.stringify({ threadId, text })
     });
 
     if (!response.ok) {
@@ -157,7 +156,7 @@ async function sendMessage(text) {
     }
 
     console.log('Message sent successfully:', await response.json());
-    displayMessages(currentThreadId);
+    await displayMessages(currentThreadId);
 }
 
 async function handleSendMessage() {
@@ -171,8 +170,10 @@ async function handleSendMessage() {
     messageInput.value = '';
     messageInput.placeholder = ''; // Clear the input field immediately
     showGeneratingText(); // Show generating text with animation
-
-    await sendMessage(text);
+    if (!currentThreadId) {
+        currentThreadId = await fetchNewThreadId(); // Create a new thread if none exists
+    }
+    await sendMessage(text, currentThreadId);
 
     messageInput.disabled = false; // Re-enable input field
     removeGeneratingText();
@@ -227,10 +228,9 @@ function resizeTextarea(textarea) {
     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
 }
 
-// function resizeTextarea(textarea) {
-//     textarea.style.height = 'auto';
-//     textarea.style.height = `${textarea.scrollHeight}px`;
-// }
+const delete_conversations = async () => {
+    location.reload();
+};
 
 
 // new code
