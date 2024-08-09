@@ -115,18 +115,15 @@ async function displayMessages(threadId) {
         if (message.Role.toLowerCase() === 'user') {
             messageElement.style.padding = '10px';
             messageElement.style.alignSelf = 'flex-end';
-            messageElement.style.width = 'fit-content';
-            messageElement.style.maxWidth = '80%';
         } else {
             messageElement.style.padding = '10px';
-            messageElement.style.width = 'fit-content';
-            messageElement.style.maxWidth = '80%';
         }
+        messageElement.style.width = 'fit-content';
+        messageElement.style.maxWidth = '80%';
         messageElement.style.lineHeight = '1.5';
         messageElement.style.backgroundColor = '#84719040';
-        //messageElement.style.width = 'fit-content';
-        messageElement.style.borderRadius = '8px';
-        messageElement.style.margin = '5px';
+        messageElement.style.margin = '10px';
+        messageElement.style.borderRadius = '10px';
         //const renderedContent = md.render(message.Content[0].Text);
         const cleanedContent = message.Content[0].Text.replace(/【.*?】/g, '');
 
@@ -222,11 +219,6 @@ messageInput.addEventListener('keydown', function (event) {
 messageInput.addEventListener('input', function () {
     resizeTextarea(this);
 });
-
-function resizeTextarea(textarea) {
-    textarea.style.height = '70px';
-    textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
-}
 
 const delete_conversations = async () => {
     location.reload();
