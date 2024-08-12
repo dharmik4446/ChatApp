@@ -220,12 +220,69 @@ messageInput.addEventListener('input', function () {
     resizeTextarea(this);
 });
 
-const delete_conversations = async () => {
-    location.reload();
-};
+// const delete_conversations = async () => {
+//     location.reload();
+// };
+
+async function delete_conversations() {
+    if (!currentThreadId) {
+        console.error('No thread selected to delete');
+        return;
+    }
+
+    try {
+        // Call the delete thread API
+        const response = await fetch(`http://localhost:5111/Thread?threadId=${currentThreadId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            console.error('Error deleting thread:', await response.text());
+            return;
+        }
+
+        console.log('Thread deleted successfully');
+
+        // Clear the messages box
+        message_box.innerHTML = '';
+
+        // Remove the thread from the threads div
+        const threadItems = document.querySelectorAll('.thread-item');
+        threadItems.forEach(item => {
+            const span = item.querySelector('span');
+            if (span && span.textContent === currentThreadId) {
+                item.remove();
+            }
+        });
+
+        // Reset the currentThreadId
+        currentThreadId = null;
+
+        // Refresh the thread list
+
+    } catch (error) {
+        console.error('Error deleting thread:', error);
+    }
+}
+
+//to fetch all the threads inside the db
+// async function fetchAllThreads() {
+//     try {
+//         const response = await fetch("http://localhost:5111/Thread/GetAllThread");
+//         const data = await response.json();
+//         console.log('Fetched threads:', data); // Log the fetched data
+//         return data.threads || []; // Ensure it returns an array
+//     } catch (error) {
+//         console.error('Error fetching threads:', error);
+//         return [];
+//     }
+// }
 
 
-// new code
+
+
+
+// old code
 // const delete_conversations = async () => {
 //     localStorage.clear();
 //     await new_conversation();

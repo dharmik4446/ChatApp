@@ -963,3 +963,35 @@ a:-webkit-any-link {
     --colour-3: hsl(209 50% 90%);
     --conversations: hsl(209 50% 80%);
 }
+
+
+.thread-item {
+    white-space: nowrap;
+    padding: 5px 10px;
+    border: 1px solid white;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: block;
+    overflow: hidden;
+}
+
+.message {
+    padding: 10px;
+    width: fit-content;
+    max-width: 80%;
+    line-height: 1.5;
+    background-color: #84719040;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.user-message {
+    align-self: flex-end;
+}
+
+.bot-message {
+    align-self: flex-start;
+}
