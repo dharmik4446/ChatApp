@@ -41,13 +41,30 @@ document.querySelector(".mobile-sidebar").addEventListener("click", (event) => {
     window.scrollTo(0, 0);
 });
 
-
+document.addEventListener('DOMContentLoaded', function () {
+    fetchAllThreads();
+});
 
 document.getElementById('new_convo').addEventListener('click', function () {
     //addThreadToThreadsDiv("thread_lF9tOfU3SjzxRsnxfQAieR4g");
     fetchNewThreadId();
 
 });
+
+//to fecth all the threads
+async function fetchAllThreads() {
+    try {
+        const response = await fetch("http://localhost:5111/Thread/GetAllThread");
+        const data = await response.json();
+        data.forEach(thread => {
+            addThreadToThreadsDiv(thread);
+        });
+    } catch (error) {
+        console.error('Error fetching threads:', error);
+    }
+}
+
+
 async function fetchNewThreadId() {
     try {
         const response = await fetch("http://localhost:5111/Thread/CreateThread");
@@ -60,14 +77,13 @@ async function fetchNewThreadId() {
     }
 }
 
+
 function addThreadToThreadsDiv(threadId) {
     const threadsDiv = document.querySelector('.threads');
     if (!threadsDiv) {
         console.error('Threads div not found');
         return;
     }
-
-    //const shouldScrollToBottom = threadsDiv.scrollTop === threadsDiv.scrollHeight - threadsDiv.clientHeight;
 
     const threadItem = document.createElement('div');
     threadItem.className = 'thread-item';
@@ -84,7 +100,7 @@ function addThreadToThreadsDiv(threadId) {
     threadItem.style.textOverflow = 'ellipsis';
     threadItem.style.maxWidth = '100%'; // Ensure it does not exceed the parent div's width
     threadItem.style.display = 'block'; // Or 'inline-block'
-    threadItem.style.overflow = 'hidden'; // Hide any overflow content
+    threadItem.style.overflow = 'hidden';
 
     threadItem.addEventListener('click', () => {
         currentThreadId = threadId;
@@ -124,7 +140,6 @@ async function displayMessages(threadId) {
         messageElement.style.backgroundColor = '#84719040';
         messageElement.style.margin = '10px';
         messageElement.style.borderRadius = '10px';
-        //const renderedContent = md.render(message.Content[0].Text);
         const cleanedContent = message.Content[0].Text.replace(/【.*?】/g, '');
 
         // Render the cleaned content
@@ -258,25 +273,13 @@ async function delete_conversations() {
         // Reset the currentThreadId
         currentThreadId = null;
 
-        // Refresh the thread list
 
     } catch (error) {
         console.error('Error deleting thread:', error);
     }
 }
 
-//to fetch all the threads inside the db
-// async function fetchAllThreads() {
-//     try {
-//         const response = await fetch("http://localhost:5111/Thread/GetAllThread");
-//         const data = await response.json();
-//         console.log('Fetched threads:', data); // Log the fetched data
-//         return data.threads || []; // Ensure it returns an array
-//     } catch (error) {
-//         console.error('Error fetching threads:', error);
-//         return [];
-//     }
-// }
+
 
 
 

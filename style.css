@@ -54,7 +54,7 @@
 }
 
 #message-input::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
     padding-right: 10px;
 }
 
@@ -66,7 +66,7 @@
 
 /* Handle */
 #message-input::-webkit-scrollbar-thumb {
-    width: 2px;
+    width: 1px;
     background: #929191;
     border-radius: 5px;
     padding: 0px 2px 0px 2px;
@@ -83,13 +83,16 @@
 
 /* Track */
 .threads::-webkit-scrollbar-track {
+    display: none;
     border-radius: 4px;
-    background: #d2d2d2;
 }
 
 /* Handle */
 .threads::-webkit-scrollbar-thumb {
+    width: 2px;
     background: #929191;
+    border-radius: 5px;
+    padding: 0px 2px 0px 2px;
 }
 
 /* Handle on hover */
@@ -923,10 +926,10 @@ a:-webkit-any-link {
 }
 
 .green {
-    --colour-1: hsl(109 50% 90%);
-    --clr-card-bg: hsl(109 50% 100%);
-    --colour-3: hsl(109 50% 15%);
-    --conversations: hsl(109 50% 25%);
+    --colour-1: hsl(120, 12%, 94%);
+    --clr-card-bg: hsl(0, 0%, 3%);
+    --colour-3: hsl(108, 29%, 93%);
+    --conversations: hsl(0, 0%, 3%);
 }
 
 .dark {
@@ -953,8 +956,8 @@ a:-webkit-any-link {
 :root:has(#green:checked) {
     --colour-1: hsl(109 50% 90%);
     --clr-card-bg: hsl(109 50% 100%);
-    --colour-3: hsl(109 50% 15%);
-    --conversations: hsl(109 50% 25%);
+    --colour-3: hsl(120, 3%, 6%);
+    --conversations: hsl(0, 0%, 2%);
 }
 
 :root:has(#dark:checked) {
