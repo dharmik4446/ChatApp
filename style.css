@@ -21,6 +21,15 @@
     max-height: 90vh;
 }
 
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.5em;
+    color: gray;
+}
+
 /* Styling the scrollbar track */
 .box#messages::-webkit-scrollbar {
     width: 8px;
@@ -110,6 +119,9 @@
 }
 
 .threads {
+    background-color: #84719040;
+    padding: 5px;
+    border-radius: 10px;
     max-height: 500px;
     /* Limit the container height */
     overflow-y: auto;

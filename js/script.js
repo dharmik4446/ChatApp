@@ -71,6 +71,7 @@ async function fetchNewThreadId() {
         const data = await response.json();
         addThreadToThreadsDiv(data.threadId);
         currentThreadId = data.threadId;
+        displayMessages(data.threadId);
         return data.threadId; // Return the new threadId
     } catch (error) {
         console.error('Error creating thread:', error);
@@ -92,6 +93,7 @@ function addThreadToThreadsDiv(threadId) {
 
     // Apply styles to prevent overflow
     threadItem.style.whiteSpace = 'nowrap';
+    threadItem.style.backgroundColor = 'Black';
     threadItem.style.padding = '5px 10px 5 px 5px';
     threadItem.style.border = '1px solid white';
     threadItem.style.borderRadius = '10px';
@@ -102,8 +104,10 @@ function addThreadToThreadsDiv(threadId) {
     threadItem.style.display = 'block'; // Or 'inline-block'
     threadItem.style.overflow = 'hidden';
 
-    threadItem.addEventListener('click', () => {
+    threadItem.addEventListener('click', async () => {
         currentThreadId = threadId;
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.innerHTML = '<div class="loading">Loading...</div>';
         displayMessages(threadId);
     });
 
