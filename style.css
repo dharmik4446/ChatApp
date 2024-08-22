@@ -87,7 +87,7 @@
 }
 
 .threads::-webkit-scrollbar {
-    width: 5px;
+    width: 7px;
 }
 
 /* Track */
@@ -98,7 +98,6 @@
 
 /* Handle */
 .threads::-webkit-scrollbar-thumb {
-    width: 2px;
     background: #929191;
     border-radius: 5px;
     padding: 0px 2px 0px 2px;
@@ -119,10 +118,11 @@
 }
 
 .threads {
-    background-color: #84719040;
+    background-color: #50326340;
     padding: 5px;
-    border-radius: 10px;
-    max-height: 500px;
+    border-radius: var(--border-radius-1);
+    border: 0.5px solid #c7a2ff;
+    max-height: 530px;
     /* Limit the container height */
     overflow-y: auto;
     /* Enable vertical scrolling */
