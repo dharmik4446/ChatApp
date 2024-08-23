@@ -21,6 +21,15 @@
     max-height: 90vh;
 }
 
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-size: 1.5em;
+    color: gray;
+}
+
 /* Styling the scrollbar track */
 .box#messages::-webkit-scrollbar {
     width: 8px;
@@ -78,7 +87,7 @@
 }
 
 .threads::-webkit-scrollbar {
-    width: 5px;
+    width: 7px;
 }
 
 /* Track */
@@ -89,7 +98,6 @@
 
 /* Handle */
 .threads::-webkit-scrollbar-thumb {
-    width: 2px;
     background: #929191;
     border-radius: 5px;
     padding: 0px 2px 0px 2px;
@@ -110,7 +118,11 @@
 }
 
 .threads {
-    max-height: 500px;
+    background-color: #50326340;
+    padding: 5px;
+    border-radius: var(--border-radius-1);
+    border: 0.5px solid #c7a2ff;
+    max-height: 530px;
     /* Limit the container height */
     overflow-y: auto;
     /* Enable vertical scrolling */

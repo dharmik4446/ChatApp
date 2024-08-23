@@ -71,6 +71,7 @@ async function fetchNewThreadId() {
         const data = await response.json();
         addThreadToThreadsDiv(data.threadId);
         currentThreadId = data.threadId;
+        displayMessages(data.threadId);
         return data.threadId; // Return the new threadId
     } catch (error) {
         console.error('Error creating thread:', error);
@@ -92,9 +93,10 @@ function addThreadToThreadsDiv(threadId) {
 
     // Apply styles to prevent overflow
     threadItem.style.whiteSpace = 'nowrap';
+    threadItem.style.backgroundColor = 'Black';
     threadItem.style.padding = '5px 10px 5 px 5px';
     threadItem.style.border = '1px solid white';
-    threadItem.style.borderRadius = '10px';
+    threadItem.style.borderRadius = '8px';
     threadItem.style.marginBottom = '5px';
     threadItem.style.marginRight = '5px';
     threadItem.style.textOverflow = 'ellipsis';
@@ -102,8 +104,10 @@ function addThreadToThreadsDiv(threadId) {
     threadItem.style.display = 'block'; // Or 'inline-block'
     threadItem.style.overflow = 'hidden';
 
-    threadItem.addEventListener('click', () => {
+    threadItem.addEventListener('click', async () => {
         currentThreadId = threadId;
+        const messagesContainer = document.getElementById('messages');
+        messagesContainer.innerHTML = '<div class="loading">Loading...</div>';
         displayMessages(threadId);
     });
 
@@ -123,7 +127,7 @@ async function displayMessages(threadId) {
     //const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=thread_lF9tOfU3SjzxRsnxfQAieR4g`);
     const sampleMessages = await response.json(); // Assuming the API returns JSON in the expected format
 
-    messagesContainer.innerHTML = ''; // Clear previous messages
+    messagesContainer.innerHTML = ''; // Clear previous messages before rendering new ones
     sampleMessages.forEach(message => {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', message.Role.toLowerCase() + '-message');
@@ -204,8 +208,6 @@ function showGeneratingText() {
     generatingText.style.color = 'gray';
     generatingText.style.pointerEvents = 'none'; // Make sure the element does not block mouse events
     document.querySelector('.input-box').appendChild(generatingText);
-
-
 
     let dotCount = 0;
     generatingText.animationInterval = setInterval(() => {
