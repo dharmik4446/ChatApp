@@ -7,7 +7,6 @@ const query = (obj) =>
 const colorThemes = document.querySelectorAll('[name="theme"]');
 const markdown = window.markdownit();
 const message_box = document.getElementById(`messages`);
-// const message_input = document.getElementById(`message-input`);
 const box_conversations = document.querySelector(`.top`);
 const spinner = box_conversations.querySelector(".spinner");
 const stop_generating = document.querySelector(`.stop_generating`);
@@ -20,25 +19,35 @@ const text = messageInput.value.trim();
 const md = window.markdownit();
 let prompt_lock = false;
 
-// hljs.addPlugin(new CopyButtonPlugin());
+hljs.addPlugin(new CopyButtonPlugin());
 
-function resizeTextarea(textarea) {
-    textarea.style.height = '70px';
-    textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
-}
+// function resizeTextarea(textarea) {
+//     textarea.style.height = '70px';
+//     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+// }
 
-document.querySelector(".mobile-sidebar").addEventListener("click", (event) => {
-    const sidebar = document.querySelector(".conversations");
+// document.querySelector(".mobile-sidebar").addEventListener("click", (event) => {
+//     const sidebar = document.querySelector(".conversations");
 
-    if (sidebar.classList.contains("shown")) {
-        sidebar.classList.remove("shown");
-        event.target.classList.remove("rotated");
-    } else {
-        sidebar.classList.add("shown");
-        event.target.classList.add("rotated");
+//     if (sidebar.classList.contains("shown")) {
+//         sidebar.classList.remove("shown");
+//         event.target.classList.remove("rotated");
+//     } else {
+//         sidebar.classList.add("shown");
+//         event.target.classList.add("rotated");
+//     }
+
+//     window.scrollTo(0, 0);
+// });
+document.addEventListener('DOMContentLoaded', () => {
+    const mobileSidebar = document.querySelector('.mobile-sidebar');
+    const conversations = document.querySelector('.conversations');
+
+    if (mobileSidebar && conversations) {
+        mobileSidebar.addEventListener('click', () => {
+            conversations.classList.toggle('shown');
+        });
     }
-
-    window.scrollTo(0, 0);
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -91,21 +100,16 @@ function addThreadToThreadsDiv(threadId) {
     threadItem.innerHTML = `<span>${threadId}</span>`;
     threadsDiv.appendChild(threadItem);
 
-    // Apply styles to prevent overflow
-    threadItem.style.whiteSpace = 'nowrap';
-    threadItem.style.backgroundColor = 'Black';
-    threadItem.style.padding = '5px 10px 5 px 5px';
-    threadItem.style.border = '1px solid white';
-    threadItem.style.borderRadius = '8px';
-    threadItem.style.marginBottom = '5px';
-    threadItem.style.marginRight = '5px';
-    threadItem.style.textOverflow = 'ellipsis';
-    threadItem.style.maxWidth = '100%'; // Ensure it does not exceed the parent div's width
-    threadItem.style.display = 'block'; // Or 'inline-block'
-    threadItem.style.overflow = 'hidden';
-
     threadItem.addEventListener('click', async () => {
         currentThreadId = threadId;
+
+        document.querySelectorAll('.thread-item').forEach(item => {
+            item.style.backgroundColor = 'Black'; // Default background color
+        });
+
+        // Change background color of the clicked thread item
+        threadItem.style.backgroundColor = '#613e77';
+
         const messagesContainer = document.getElementById('messages');
         messagesContainer.innerHTML = '<div class="loading">Loading...</div>';
         displayMessages(threadId);
@@ -115,14 +119,12 @@ function addThreadToThreadsDiv(threadId) {
 
 }
 
-// Ensure the container can scroll vertically when there are many thread items
-document.querySelector('.threads').style.overflowY = 'auto';
+// document.querySelector('.threads').style.overflowY = 'auto';
 
 
 async function displayMessages(threadId) {
     const messagesContainer = document.getElementById('messages'); // Assuming you have an element with id 'messages'
 
-    // Fetch messages from an API
     const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=${threadId}`);
     //const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=thread_lF9tOfU3SjzxRsnxfQAieR4g`);
     const sampleMessages = await response.json(); // Assuming the API returns JSON in the expected format
@@ -236,10 +238,6 @@ messageInput.addEventListener('keydown', function (event) {
 messageInput.addEventListener('input', function () {
     resizeTextarea(this);
 });
-
-// const delete_conversations = async () => {
-//     location.reload();
-// };
 
 async function delete_conversations() {
     if (!currentThreadId) {
