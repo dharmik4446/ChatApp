@@ -15,30 +15,11 @@ const messageInput = document.getElementById('message-input');
 const fetchData = document.getElementById('fetchData');
 const messagesContainer = document.getElementById('messages');
 const text = messageInput.value.trim();
-// const uniqueThreadId = `thread_${Date.now()}`;
 const md = window.markdownit();
 let prompt_lock = false;
 
 hljs.addPlugin(new CopyButtonPlugin());
 
-// function resizeTextarea(textarea) {
-//     textarea.style.height = '70px';
-//     textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
-// }
-
-// document.querySelector(".mobile-sidebar").addEventListener("click", (event) => {
-//     const sidebar = document.querySelector(".conversations");
-
-//     if (sidebar.classList.contains("shown")) {
-//         sidebar.classList.remove("shown");
-//         event.target.classList.remove("rotated");
-//     } else {
-//         sidebar.classList.add("shown");
-//         event.target.classList.add("rotated");
-//     }
-
-//     window.scrollTo(0, 0);
-// });
 document.addEventListener('DOMContentLoaded', () => {
     const mobileSidebar = document.querySelector('.mobile-sidebar');
     const conversations = document.querySelector('.conversations');
@@ -50,14 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    fetchAllThreads();
-});
+// document.addEventListener('DOMContentLoaded', function () {
+//     fetchAllThreads();
+// });
 
 document.getElementById('new_convo').addEventListener('click', function () {
-    //addThreadToThreadsDiv("thread_lF9tOfU3SjzxRsnxfQAieR4g");
+    const messagesContainer = document.getElementById('messages');
+    messagesContainer.innerHTML = '<div class="loading">Creating Thread...</div>';
     fetchNewThreadId();
-
 });
 
 //to fecth all the threads
@@ -108,7 +89,7 @@ function addThreadToThreadsDiv(threadId) {
         });
 
         // Change background color of the clicked thread item
-        threadItem.style.backgroundColor = '#613e77';
+        threadItem.style.backgroundColor = '#4b314b';
 
         const messagesContainer = document.getElementById('messages');
         messagesContainer.innerHTML = '<div class="loading">Loading...</div>';
@@ -119,16 +100,27 @@ function addThreadToThreadsDiv(threadId) {
 
 }
 
-// document.querySelector('.threads').style.overflowY = 'auto';
 
+//hower effect on the thread-item
+document.addEventListener('DOMContentLoaded', () => {
+    const threadItems = document.querySelectorAll('.thread-item');
+    threadItems.forEach(item => {
+        item.addEventListener('mouseover', () => {
+            item.style.backgroundColor = '#c281ea40'; // Change background color on hover
+        });
+
+        item.addEventListener('mouseout', () => {
+            // Revert back to default background color on hover out
+            item.style.backgroundColor = 'Black';
+        });
+    });
+});
 
 async function displayMessages(threadId) {
     const messagesContainer = document.getElementById('messages'); // Assuming you have an element with id 'messages'
 
     const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=${threadId}`);
-    //const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=thread_lF9tOfU3SjzxRsnxfQAieR4g`);
-    const sampleMessages = await response.json(); // Assuming the API returns JSON in the expected format
-
+    const sampleMessages = await response.json();
     messagesContainer.innerHTML = ''; // Clear previous messages before rendering new ones
     sampleMessages.forEach(message => {
         const messageElement = document.createElement('div');
@@ -145,7 +137,7 @@ async function displayMessages(threadId) {
         messageElement.style.lineHeight = '1.5';
         messageElement.style.backgroundColor = '#84719040';
         messageElement.style.margin = '10px';
-        messageElement.style.borderRadius = '10px';
+        messageElement.style.borderRadius = '6px';
         const cleanedContent = message.Content[0].Text.replace(/【.*?】/g, '');
 
         // Render the cleaned content
@@ -196,7 +188,6 @@ async function handleSendMessage() {
     messageInput.disabled = false; // Re-enable input field
     removeGeneratingText();
     messageInput.placeholder = 'Ask a question..';
-    resizeTextarea(messageInput); // Reset the textarea size
 }
 
 function showGeneratingText() {

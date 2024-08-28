@@ -142,8 +142,6 @@ body {
 }
 
 @media screen and (max-height: 600px) {
-
-
     #message-input {
         max-height: 100%;
         min-height: 100%;
@@ -183,30 +181,35 @@ body {
 }
 
 .threads {
+    height: 500px;
     background-color: #50326340;
-    padding: 5px 0px 0px 5px;
-    border-radius: var(--border-radius-1);
+    padding: 5px 5px;
+    border-radius: 10px;
     border: 0.5px solid #c7a2ff;
     max-height: 500px;
     overflow-x: hidden;
 }
 
-
-.thread-item.selected {
-    background-color: #613e77;
+.thread-item:hover {
+    background-color: #c281ea40;
 }
 
 .thread-item {
     white-space: nowrap;
     background-color: black;
-    padding: 5px 10px 5px 5px;
+    padding: 5px 10px;
+    margin-bottom: 5px;
     border: 1px solid white;
-    border-radius: 10px;
+    border-radius: 6px;
     cursor: pointer;
     text-overflow: ellipsis;
     max-width: 100%;
     display: block;
     overflow: hidden;
+}
+
+.thread-item.selected {
+    background-color: #4b314b;
 }
 
 
@@ -240,7 +243,7 @@ body {
 }
 
 .conversation #messages {
-    height: 81vh;
+    height: 79%;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -249,10 +252,6 @@ body {
     overflow-x: hidden;
     /* padding-bottom: 50px; */
 }
-
-/* .conversation .user-input {
-    max-height: 10vh;
-} */
 
 .conversation .user-input input {
     font-size: 15px;
@@ -268,30 +267,6 @@ body {
 .conversation .user-input input::placeholder {
     color: var(--user-input)
 }
-
-.gradient:nth-child(1) {
-    --top: 0;
-    --right: 0;
-    --size: 70vw;
-    --blur: calc(0.5 * var(--size));
-    --opacity: 0.3;
-    animation: zoom_gradient 6s infinite;
-}
-
-.gradient {
-    position: absolute;
-    z-index: -1;
-    border-radius: calc(0.5 * var(--size));
-    background-color: var(--accent);
-    background: radial-gradient(circle at center, var(--accent), var(--accent));
-    width: 70vw;
-    height: 70vw;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    filter: blur(calc(0.5 * 70vw)) opacity(var(--opacity));
-}
-
 
 .conversations {
     gap: 16px;
@@ -454,73 +429,6 @@ body {
     }
 }
 
-.stop_generating-hiding button {
-    animation: hide_popup 0.4s;
-}
-
-.stop_generating-hidden button {
-    display: none;
-}
-
-.typing {
-    position: absolute;
-    top: -25px;
-    left: 0;
-    font-size: 14px;
-    animation: show_popup 0.4s;
-}
-
-.typing-hiding {
-    animation: hide_popup 0.4s;
-}
-
-.typing-hidden {
-    display: none;
-}
-
-input[type="checkbox"] {
-    height: 0;
-    width: 0;
-    display: none;
-}
-
-label {
-    cursor: pointer;
-    text-indent: -9999px;
-    width: 50px;
-    height: 30px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    background-color: var(--blur-bg);
-    border-radius: var(--border-radius-1);
-    border: 1px solid var(--blur-border);
-    display: block;
-    border-radius: 100px;
-    position: relative;
-    overflow: hidden;
-    transition: 0.33s;
-}
-
-label:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 5px;
-    width: 20px;
-    height: 20px;
-    background: var(--colour-3);
-    border-radius: 90px;
-    transition: 0.33s;
-}
-
-input:checked+label {
-    background: var(--blur-border);
-}
-
-input:checked+label:after {
-    left: calc(100% - 5px - 20px);
-}
 
 .buttons {
     min-height: 10vh;
@@ -559,10 +467,8 @@ select {
     -webkit-border-radius: 8px;
     -moz-border-radius: 8px;
     border-radius: 8px;
-
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
-
     cursor: pointer;
     background-color: var(--blur-bg);
     border: 1px solid var(--blur-border);
@@ -572,13 +478,8 @@ select {
     overflow: hidden;
     outline: none;
     padding: 8px 16px;
-
     appearance: none;
 }
-
-
-
-
 
 .info {
     padding: 8px 12px;
@@ -686,7 +587,6 @@ ul {
     left: 45%;
     width: 20px;
     height: 20px;
-
     border-radius: 50%;
     border: 1px solid var(--conversations);
     border-top-color: white;
@@ -834,19 +734,6 @@ a:-webkit-any-link {
     position: absolute;
     white-space: nowrap;
     width: 1px;
-}
-
-.thread-item {
-    white-space: nowrap;
-    padding: 5px 10px;
-    border: 1px solid white;
-    border-radius: 10px;
-    margin-bottom: 5px;
-    margin-right: 5px;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    display: block;
-    overflow: hidden;
 }
 
 .message {
