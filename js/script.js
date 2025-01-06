@@ -4,6 +4,7 @@ const query = (obj) =>
     Object.keys(obj)
         .map((k) => encodeURIComponent(k) + "=" + encodeURIComponent(obj[k]))
         .join("&");
+
 const colorThemes = document.querySelectorAll('[name="theme"]');
 const markdown = window.markdownit();
 const message_box = document.getElementById(`messages`);
@@ -44,7 +45,7 @@ document.getElementById('new_convo').addEventListener('click', function () {
 //to fecth all the threads
 async function fetchAllThreads() {
     try {
-        const response = await fetch("http://localhost:5111/Thread/GetAllThread");
+        const response = await fetch("https://localhost:7178/Thread/GetAllThread");
         const data = await response.json();
         data.forEach(thread => {
             addThreadToThreadsDiv(thread);
@@ -57,11 +58,14 @@ async function fetchAllThreads() {
 
 async function fetchNewThreadId() {
     try {
-        const response = await fetch("http://localhost:5111/Thread/CreateThread");
+        const response = await fetch("https://localhost:7178/Thread/CreateThread");
         const data = await response.json();
+
         addThreadToThreadsDiv(data.threadId);
         currentThreadId = data.threadId;
+
         displayMessages(data.threadId);
+
         return data.threadId; // Return the new threadId
     } catch (error) {
         console.error('Error creating thread:', error);
@@ -104,6 +108,7 @@ function addThreadToThreadsDiv(threadId) {
 //hower effect on the thread-item
 document.addEventListener('DOMContentLoaded', () => {
     const threadItems = document.querySelectorAll('.thread-item');
+
     threadItems.forEach(item => {
         item.addEventListener('mouseover', () => {
             item.style.backgroundColor = '#c281ea40'; // Change background color on hover
@@ -119,12 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
 async function displayMessages(threadId) {
     const messagesContainer = document.getElementById('messages'); // Assuming you have an element with id 'messages'
 
-    const response = await fetch(`http://localhost:5111/Thread/GetAllMessages?threadId=${threadId}`);
+    const response = await fetch(`https://localhost:7178/Thread/GetAllMessages?threadId=${threadId}`);
     const sampleMessages = await response.json();
+
     messagesContainer.innerHTML = ''; // Clear previous messages before rendering new ones
+
     sampleMessages.forEach(message => {
         const messageElement = document.createElement('div');
         messageElement.classList.add('message', message.Role.toLowerCase() + '-message');
+
         // Apply different styling based on the message role
         if (message.Role.toLowerCase() === 'user') {
             messageElement.style.padding = '10px';
@@ -138,6 +146,7 @@ async function displayMessages(threadId) {
         messageElement.style.backgroundColor = '#84719040';
         messageElement.style.margin = '10px';
         messageElement.style.borderRadius = '6px';
+
         const cleanedContent = message.Content[0].Text.replace(/【.*?】/g, '');
 
         // Render the cleaned content
@@ -150,7 +159,7 @@ async function displayMessages(threadId) {
 }
 
 async function sendMessage(text, threadId) {
-    const response = await fetch(`http://localhost:5111/Thread/SendMessage`, {
+    const response = await fetch(`https://localhost:7178/Thread/SendMessage`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -238,7 +247,7 @@ async function delete_conversations() {
 
     try {
         // Call the delete thread API
-        const response = await fetch(`http://localhost:5111/Thread?threadId=${currentThreadId}`, {
+        const response = await fetch(`https://localhost:7178/Thread?threadId=${currentThreadId}`, {
             method: 'DELETE'
         });
 
